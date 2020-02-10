@@ -7,14 +7,22 @@
 
 package frc.robot.subsystems;
 
+import com.revrobotics.CANDigitalInput;
+import com.revrobotics.CANDigitalInput.LimitSwitchPolarity;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Climber extends SubsystemBase {
+  // Motors
   private CANSparkMax gantryMotor;
+  private CANSparkMax climbMotor;
+
+  // Sensors
+  private CANDigitalInput climbMotorMinSwitch;
 
   /**
    * Creates a new Climber.
@@ -23,6 +31,11 @@ public class Climber extends SubsystemBase {
     // For initalization code
     gantryMotor = new CANSparkMax(Constants.CANIds.Gantry_Motor_Address, MotorType.kBrushless); // Creates a new motor
     gantryMotor.restoreFactoryDefaults();
+
+    climbMotor = new CANSparkMax(Constants.CANIds.Lift_Motor_Address, MotorType.kBrushless); // Creates a new motor
+    climbMotor.restoreFactoryDefaults(); // Sets the controller back to the factory defaults
+    climbMotorMinSwitch = climbMotor.getReverseLimitSwitch(LimitSwitchPolarity.kNormallyOpen); // Configures the reverse limit switch
+    climbMotorMinSwitch.enableLimitSwitch(true); // Enables the switch
   }
 
   /**
@@ -36,6 +49,6 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("Lift location", climbMotorMinSwitch.get()); // .get can return the value of that input
   }
 }
